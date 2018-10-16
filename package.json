@@ -1,0 +1,32 @@
+{
+  "name": "chatApp",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node node_modules/react-native/local-cli/cli.js start",
+    "test": "jest"
+  },
+  "dependencies": {
+    "native-base": "^2.8.0",
+    "react": "^16.3.0-alpha.1",
+    "react-native": "0.55.2",
+    "react-native-fcm": "^16.2.3",
+    "react-native-firebase": "^5.0.0",
+    "react-native-image-picker": "^0.26.10",
+    "react-native-router-flux": "^4.0.5",
+    "react-navigation": "2.17.0",
+    "react-phone-number-input": "^2.2.9",
+    "react-redux": "^5.0.7",
+    "redux": "^4.0.0",
+    "redux-thunk": "^2.3.0"
+  },
+  "devDependencies": {
+    "babel-jest": "23.2.0",
+    "babel-preset-react-native": "4.0.0",
+    "jest": "23.2.0",
+    "react-test-renderer": "16.3.1"
+  },
+  "jest": {
+    "preset": "react-native"
+  }
+}
