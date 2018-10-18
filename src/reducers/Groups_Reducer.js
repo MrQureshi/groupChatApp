@@ -8,7 +8,7 @@ const Groups = (state = [], action) => {
         case "GROUP_LIST":
             return Object.assign({}, state, { groupList: action.groupList })
         case 'SELECTED_GROUP':
-        console.log("SELECTED_GROUP aaaa")
+        // console.log("SELECTED_GROUP aaaa")
             // alert("SELECTED_GROUP Match")
             return Object.assign({}, state, { SeletcedGroup: action.SeletcedGroup, Messages: action.Messages })
         default:

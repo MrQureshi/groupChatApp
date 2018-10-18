@@ -18,7 +18,8 @@ class GroupsDetails extends React.Component {
         super(props);
         this.state = {
             showModal: false,
-            selectedGroup: null
+            // selectedGroup: null,
+            // join: false
         }
     }
     componentDidMount() {
@@ -68,11 +69,12 @@ class GroupsDetails extends React.Component {
     //     firebase.auth().signOut();
     // }
     render() {
-        // const { groupList } = this.state
+        // const {  join } = this.state;
+        // const isInvaild = join === false;
         // console.log("render props", this.props.GroupList)
         const Currentuser = firebase.auth().currentUser.uid
-        console.log("this.props.SeletcedGroup", this.props.SeletcedGroup)
-        console.log("this.props.messages", this.props.messages)
+        // console.log("this.props.SeletcedGroup", this.props.SeletcedGroup)
+        // console.log("this.props.messages", this.props.messages)
 
         return (
             <View style={{ height: height - 75 }}>
@@ -91,13 +93,15 @@ class GroupsDetails extends React.Component {
                     <ScrollView>
                         <List>
                             {
-
                                 this.props.GroupList && this.props.GroupList.map((gList, index) => {
                                     let ary = gList.member ? Object.keys(gList.member) : []
-                                    console.log("ary", ary)
+                                    // console.log("ary", ary)
+
+                                    // console.log("ary indexOf", ary.indexOf(Currentuser))
+
                                     return (
                                         <ListItem thumbnail key={index} >
-                                            <TouchableOpacity style={{ flexDirection: "row" }}
+                                            <TouchableOpacity disabled={ary.indexOf(Currentuser) === -1} style={{ flexDirection: "row" }}
                                                 onPress={() => this.selectGroup(gList)}
                                             >
                                                 <Left>
@@ -109,7 +113,6 @@ class GroupsDetails extends React.Component {
                                                 </Body>
                                                 <Right>
                                                     {
-
                                                         ary.indexOf(Currentuser) !== -1 ? <View><Text>View</Text></View> :
                                                             <TouchableOpacity onPress={() => this.handleRequest(gList.key)} >
                                                                 <Text>Join</Text>
@@ -177,7 +180,7 @@ class GroupsDetails extends React.Component {
     }
 }
 const mapStateToProps = (state) => {
-    console.log("???mapStateToProps>GroupDetails", state)
+    // console.log("???mapStateToProps>GroupDetails", state)
     return {
         // User: state.User,
         // userdetail: state.userDetail.userdetail

@@ -63,7 +63,7 @@ class Chats extends React.Component {
         // const seletcedGroupKey = SeletcedGroup.key
         // this.props.getMessageOfSelectedGroup(seletcedGroupKey)
         return (
-            <View  >
+            <View >
                 <Header>
                     <Left>
                         <Button transparent onPress={() => this.props.tabRef.goToPage(0)} >
@@ -134,7 +134,7 @@ class Chats extends React.Component {
     }
 }
 const mapStateToProps = (state) => {
-    console.log("???mapStateToPropsChat", state)
+    // console.log("???mapStateToPropsChat", state)
     return {
         // User: state.User,
         // userdetail: state.userDetail.userdetail

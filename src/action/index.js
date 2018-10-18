@@ -95,20 +95,33 @@ export const addMember = (key) => {
         let uid = Currentuser.uid
         let phoneNumber = Currentuser.phoneNumber
 
-        console.log("?><", uid, phoneNumber)
+        firebase.messaging().getToken()
+        .then(Token => {
+            if (Token) {
+                firebase.database().ref(`Groups/${key}/Token/${Token}`).set({ Token})
+            }})
 
-        firebase.database().ref(`Groups/${key}/member/${uid}`).set({ phoneNumber })
+        firebase.messaging().getToken()
+            .then(Token => {
+                if (Token) {
+                    // user has a device token
+                    // console.log("?><", Token)
+                    if (Token) {
+                        firebase.database().ref(`Groups/${key}/member/${uid}`).set({ phoneNumber, Token })
+                    }
+                }
+            }
+            );
     }
 }
-
 export const getSeletcedGroup = (list) => {
     return dispatch => {
-        console.log("getSeletcedGroup", list)
-        console.log("getSeletcedGroupKeyyy", list.key)
+        // console.log("getSeletcedGroup", list)
+        // console.log("getSeletcedGroupKeyyy", list.key)
 
 
         firebase.database().ref(`messages/${list.key}`).on('value', snap => {
-            console.log("xzxzx", snap.val())
+            // console.log("abc", snap.val())
             let messages = []
             let objMsg = snap.val()
             for (let key in objMsg) {
@@ -121,12 +134,17 @@ export const getSeletcedGroup = (list) => {
                 Messages: messages
             })
         })
-        
     }
 }
 export const sendMessage = (textMsg, groupKey) => {
     // console.log("Action MSG", textMsg, groupKey)
     return () => {
+        //  const sendNotification =  
+        //  firebase.database().ref(`messages/`).on('value', snap=>{
+
+        //      console.log("sendNotification", snap)
+        //  })
+
 
         let Currentuser = firebase.auth().currentUser.uid
 
@@ -140,6 +158,17 @@ export const sendMessage = (textMsg, groupKey) => {
                 let userKey = objUser.userKey
                 let rollNumber = objUser.rollNumber
                 let phoneNumber = objUser.phoneNumber
+
+                // firebase.database().ref(`messages/`).push(
+                //     {
+                //         userName,
+                //         userKey,
+                //         rollNumber,
+                //         phoneNumber,
+                //         groupKey,
+                //         textMsg,
+                //     }
+                // )
 
                 firebase.database().ref(`messages/${groupKey}`).push(
                     {
