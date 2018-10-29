@@ -1,6 +1,5 @@
 
 const Messages =  (state = [], action) => {
-    // console.log("Group_REducer", state)
     switch (action.type) {
         case 'SELECTED_GROUPMESSAGE':
             // alert("SELECTED_GROUPMESSAGE Match")

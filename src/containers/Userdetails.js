@@ -16,39 +16,13 @@ class UserDetails extends React.Component {
         }
     }
     componentWillReceiveProps(nextProps) {
+        console.log("nextPProp userDetail", nextProps.logedUser)
+        let currentUser = nextProps.logedUser
 
-        console.log("nextProps in userDet", nextProps)
-        let userKey = nextProps && nextProps.userdetail && nextProps.userdetail.userKey
-        // console.log("uid,", userKey)
-        if (userKey) {
-            this.props.navigation.navigate("Dashboard")
+        if (currentUser) {
+            this.props.navigation.replace("Dashboard")
         }
     }
-    // componentDidMount() {
-    //     firebase.auth().onAuthStateChanged((user) => {
-    //         if (user) {
-    // console.log(user.uid)
-
-
-    // firebase.database().ref(`user/${user.uid}`).on('value', snap => {
-    //     console.log("aaaaaaaaaaa")
-    //     let objuser = snap.val();
-    //     // console.log("user.uid", user.uid)
-    //     // console.log("key", objuser.userKey)
-
-    //     if (user.uid === objuser.userKey) {
-    //         this.props.navigation.navigate("Groups")
-    //     }
-    // })
-    // this.props.navigation.navigate("Groups")
-
-    // this.setState({
-    //     user
-    // })
-    // this.props.navigation.navigate("Home")
-    //         }
-    //     });
-    // }
 
     handleSubmit = () => {
         const { userName, rollNum } = this.state
@@ -56,15 +30,13 @@ class UserDetails extends React.Component {
         let phoneNumber = firebase.auth().currentUser._user.phoneNumber
         this.props.userDetail(userKey, phoneNumber, userName, rollNum)
     }
-    // signOut = () => {
-    //     firebase.auth().signOut().then(()=>{
-    //         this.props.navigation.navigate("Authnumber")
-    //     });
-    // }
+    signOut = () => {
+        firebase.auth().signOut().then(()=>{
+            this.props.navigation.navigate("Authnumber")
+        });
+    }
     render() {
         const { userName, rollNum } = this.state
-        // console.log("renderr", this.props.userdetail)
-        // this.props.navigation.navigate("Groups")
         return (
             // <View>
             //     <Text>userInput</Text>
@@ -102,6 +74,8 @@ class UserDetails extends React.Component {
                             />
                         </Item>
                         <Button title="submit" color="green" onPress={this.handleSubmit} />
+                        <Button title="submit" color="green" onPress={this.signOut} />
+
                     </Form>
                 </Content>
             </Container>
@@ -111,9 +85,10 @@ class UserDetails extends React.Component {
     }
 }
 const mapStateToProps = (state) => {
-    // console.log("mapStateToProps>??", state)
+    console.log("state UserDetal", state)
     return {
-        User: state.User,
+        logedUser: state.Signin.logUser,
+
         userdetail: state.userDetail.userdetail
     }
 }

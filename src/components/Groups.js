@@ -1,13 +1,13 @@
 import React from 'react'
 import {
-    Container, Header, Modal, Content, View, Fab, Button, Icon, Left, Body, Title, Right,
+    Container, Badge, Header, Modal, Content, View, Fab, Button, Icon, Left, Body, Title, Right,
     List, ListItem, Thumbnail
 } from 'native-base';
 import { Text, Dimensions, ScrollView, TouchableOpacity, TouchableHighlight } from 'react-native'
 import firebase from 'react-native-firebase'
 import Create from '../components/createGroup'
 import { connect } from 'react-redux'
-import { groupList, addMember, getSeletcedGroup } from '../action'
+import { groupList, requestHandle, getSelectedGroup, Requests } from '../action'
 const { height, width, fontScale } = Dimensions.get("window")
 
 
@@ -18,63 +18,47 @@ class GroupsDetails extends React.Component {
         super(props);
         this.state = {
             showModal: false,
-            // selectedGroup: null,
-            // join: false
+            grplist:[]
+            // tab: 0,
         }
     }
+
     componentDidMount() {
-        // firebase.database().ref(`Groups/`).on('value', snap => {
-        //     let groupList = [];
-        //     // console.log("aaaaaaaaaaa")
-        //     let objGroup = snap.val();
-        //     // console.log("obj", objGroup)
-        //     for (let key in objGroup) {
-        //         groupList.push({ ...objGroup[key], key });
-        //     }
-        //     this.setState({
-        //         groupList
-        //     })
-        // })
         this.props.groupList();
     }
 
-
     selectGroup = (list) => {
-
-        // console.log("selected Group", list)
-        this.props.getSeletcedGroup(list)
-
-        // this.props.tabRef.goToPage(1)
+        this.props.getSelectedGroup(list)
     }
+
     componentWillReceiveProps(props) {
-        // console.log("comp", props.messages)
-        // console.log("compasda", props.SeletcedGroup)
-        if (props.SeletcedGroup) {
-            props.tabRef.goToPage(1)
-        }
+        this.setState({
+            grplist: props.GroupList
+        })
+        // if (props.GroupList) {
+        //     props.tabRef.goToPage(1)
+
+        // }
+        // if (props.SelectedGroup) {
+        //     props.tabRef.goToPage(0)
+        // }
+        // if (props.reqList) {
+        //     this.props.tabRef.goToPage(2)
+        // }
     }
+    handleRequest = (groupKey) => {
+        let { userName } = this.props.logUser
+        this.props.requestHandle(groupKey, userName)
+    }
+    viewRequest = (key) => {
+        this.props.Requests(key)
 
-    handleRequest = (key) => {
-        // let key = list.key
-
-        this.props.addMember(key)
-
-
-        // let user = firebase.auth().currentUser
-        // console.log("Current", user)
-        // console.log("Current1", user1)
+        // this.props.navigation.navigate("Dashboard")
 
     }
-    // signOut = () => {
-    //     firebase.auth().signOut();
-    // }
     render() {
-        // const {  join } = this.state;
-        // const isInvaild = join === false;
-        // console.log("render props", this.props.GroupList)
-        const Currentuser = firebase.auth().currentUser.uid
-        // console.log("this.props.SeletcedGroup", this.props.SeletcedGroup)
-        // console.log("this.props.messages", this.props.messages)
+        const Currentuser = this.props.logUser.userKey
+        const user = this.props.logUser && this.props.logUser.user
 
         return (
             <View style={{ height: height - 75 }}>
@@ -94,83 +78,81 @@ class GroupsDetails extends React.Component {
                         <List>
                             {
                                 this.props.GroupList && this.props.GroupList.map((gList, index) => {
-                                    let ary = gList.member ? Object.keys(gList.member) : []
-                                    // console.log("ary", ary)
-
-                                    // console.log("ary indexOf", ary.indexOf(Currentuser))
+                                    let member = gList.member ? Object.keys(gList.member) : []
+                                    let arrRequest = gList.Request ? Object.keys(gList.Request) : []
+                                    let request = arrRequest.length
 
                                     return (
-                                        <ListItem thumbnail key={index} >
-                                            <TouchableOpacity disabled={ary.indexOf(Currentuser) === -1} style={{ flexDirection: "row" }}
-                                                onPress={() => this.selectGroup(gList)}
-                                            >
-                                                <Left>
-                                                    <Thumbnail square source={{ uri: gList.imageUrl }} />
-                                                </Left>
-                                                <Body>
-                                                    <Text>{gList.groupName}</Text>
-                                                    <Text note numberOfLines={1}>{gList.description} ..</Text>
-                                                </Body>
-                                                <Right>
-                                                    {
-                                                        ary.indexOf(Currentuser) !== -1 ? <View><Text>View</Text></View> :
-                                                            <TouchableOpacity onPress={() => this.handleRequest(gList.key)} >
-                                                                <Text>Join</Text>
-                                                            </TouchableOpacity>
-                                                        // gList.member ?
-                                                        //  console.log(Object.keys(gList.member))
-                                                        // Object.keys(gList.member).map((key, index) => {
-                                                        //     console.log(gList.member)
-                                                        // console.log("><><><",key)
-                                                        // console.log("curreentuser", Currentuser)
+                                        user === 'superUser' ?
+                                            <ListItem thumbnail key={index} >
+                                                <TouchableOpacity style={{ flexDirection: "row" }}
+                                                    onPress={() => { this.selectGroup(gList); this.props.tabRef.goToPage(0) }}
+                                                >
+                                                    <Left>
+                                                        <Thumbnail square source={{ uri: gList.imageUrl }} />
+                                                    </Left>
+                                                    <Body>
+                                                        <Text>{gList.groupName}</Text>
+                                                        <Text note numberOfLines={1}>{gList.description} ..</Text>
+                                                    </Body>
+                                                    <Right>
+                                                        {
+                                                            request ?
+                                                                <TouchableOpacity onPress={() => { this.viewRequest(gList.key); this.props.tabRef.goToPage(2) }}>
+                                                                    <Text style={{ color: 'green' }}  >{request} Request</Text>
+                                                                </TouchableOpacity> :
+                                                                <Text >No Request</Text>
+                                                        }
+                                                        {/* <TouchableOpacity>
+                                                        <Text style={{ color: 'green' }}  >{request} Make your self a memeber</Text>
+                                                        </TouchableOpacity> */}
 
-                                                        // if(key === Currentuser){
-                                                        //     console.log("if", key)
-                                                        //     return <Text key={index} >View</Text>
-                                                        // } else{
-                                                        //     console.log("else", key)
 
-                                                        //     return <TouchableOpacity onPress={() => this.handleRequest(gList.key)} >
-                                                        //         <Text>Join</Text>
-                                                        //     </TouchableOpacity>
-                                                        // }
-                                                        // })
-
-                                                        // :
-                                                        // <TouchableOpacity onPress={() => this.handleRequest(gList.key)} >
-                                                        //     <Text>Join</Text>
-                                                        // </TouchableOpacity>
-
-                                                        // gList.member && Object.keys(gList.member).map(uid => Currentuser === uid).length
-                                                        // // gList.member
-                                                        // ?
-                                                        // <Text>View</Text>
-                                                        // :
-                                                        //     <TouchableOpacity onPress={() => this.handleRequest(gList.key)} >
-                                                        //         <Text>Join</Text>
-                                                        //     </TouchableOpacity>
-
-                                                        // <TouchableOpacity >
-                                                        // </TouchableOpacity>
-                                                    }
-                                                </Right>
-                                            </TouchableOpacity>
-                                        </ListItem>
+                                                    </Right>
+                                                </TouchableOpacity>
+                                            </ListItem>
+                                            :
+                                            <ListItem thumbnail key={index} >
+                                                <TouchableOpacity disabled={member.indexOf(Currentuser) === -1} style={{ flexDirection: "row" }}
+                                                    onPress={() => {this.selectGroup(gList); this.props.tabRef.goToPage(0)}}
+                                                >
+                                                    <Left>
+                                                        <Thumbnail square source={{ uri: gList.imageUrl }} />
+                                                    </Left>
+                                                    <Body>
+                                                        <Text>{gList.groupName}</Text>
+                                                        <Text note numberOfLines={1}>{gList.description} ..</Text>
+                                                    </Body>
+                                                    <Right>
+                                                        {
+                                                            member.indexOf(Currentuser) !== -1 ? <View><Text>View</Text></View> :
+                                                                <TouchableOpacity onPress={() => this.handleRequest(gList.key)} >
+                                                                    <Text>Join</Text>
+                                                                </TouchableOpacity>
+                                                        }
+                                                    </Right>
+                                                </TouchableOpacity>
+                                            </ListItem>
                                     )
                                 })
                             }
                         </List>
-
                     </ScrollView>
                 </View>
+
                 {this.state.showModal && <Create close={() => this.setState({ showModal: false })} />}
-                <Fab
-                    style={{ alignContent: "center", backgroundColor: '#5067FF', marginTop: 20, position: "absolute" }}
-                    position="bottomRight"
-                    onPress={() => this.setState({ showModal: true })}
-                >
-                    <Icon name="add" />
-                </Fab>
+                {
+                    user === 'superUser'
+                        ?
+                        <Fab
+                            style={{ alignContent: "center", backgroundColor: '#5067FF', marginTop: 20, position: "absolute" }}
+                            position="bottomRight"
+                            onPress={() => this.setState({ showModal: true, })}>
+                            <Icon name="add" />
+                        </Fab>
+                        :
+                        null
+                }
             </View>
             // <View>
             //     <Text>Tab1</Text>
@@ -180,22 +162,21 @@ class GroupsDetails extends React.Component {
     }
 }
 const mapStateToProps = (state) => {
-    // console.log("???mapStateToProps>GroupDetails", state)
     return {
-        // User: state.User,
+        logUser: state.Signin.logUser,
         // userdetail: state.userDetail.userdetail
         GroupList: state.groups.groupList,
-        SeletcedGroup: state.groups.SeletcedGroup,
+        SelectedGroup: state.groups.SelectedGroup,
         messages: state.groups.Messages,
-
-
+        reqList: state.Requests.requests
     }
 }
 const mapDispatchToProps = (dispatch) => {
     return {
         groupList: () => dispatch(groupList()),
-        addMember: (key) => dispatch(addMember(key)),
-        getSeletcedGroup: (list) => dispatch(getSeletcedGroup(list))
+        requestHandle: (groupKey, userName) => dispatch(requestHandle(groupKey, userName)),
+        getSelectedGroup: (list) => dispatch(getSelectedGroup(list)),
+        Requests: (key) => dispatch(Requests(key))
     }
 }
 

@@ -30,19 +30,14 @@ class Creategroup extends Component {
             modalVisible: false,
             avatarSource: null,
             imageUrl: null,
-            join: false
-
         }
     }
     picImage = () => {
         // alert('clicked')
         ImagePicker.launchImageLibrary(options, (response) => {
-            console.log('Response = ', response);
 
             if (response.didCancel) {
-                console.log('User cancelled image picker');
             } else if (response.error) {
-                console.log('ImagePicker Error: ', response.error);
             } else {
                 const source = response.uri;
 
@@ -56,9 +51,9 @@ class Creategroup extends Component {
         });
     }
     pushData = () => {
-        const { groupName, description, imageUrl, join } = this.state
+        const { groupName, description, imageUrl } = this.state
 
-        this.props.createGroup(groupName, description, imageUrl, join)
+        this.props.createGroup(groupName, description, imageUrl)
         
         this.setState({
             groupName: '',
@@ -66,6 +61,7 @@ class Creategroup extends Component {
             imageUrl: null,
         })
         this.props.close()
+
     }
     setModalVisible(visible) {
         this.setState({ modalVisible: visible });
@@ -87,13 +83,6 @@ class Creategroup extends Component {
                 })
 
                 this.pushData()
-                // setTimeout(() => {
-                //     console.log("setTimeOut", res)
-                //     this.setState({
-                //         imageUrl: res,
-                //     })
-                //     // this.pushData()
-                // }, 10000)
             })
         })
 
@@ -101,7 +90,6 @@ class Creategroup extends Component {
 
     render() {
         const { groupName, description, avatarSource, imageUrl } = this.state
-        // console.log("render imageUrl", imageUrl)
         const isInvalid = groupName === '' || description === '' || avatarSource === null;
 
         return (
@@ -163,7 +151,6 @@ class Creategroup extends Component {
     }
 }
 // const mapStateToProps = (state) =>{
-//     console.log(state)
 //     return{
 
 //     }
@@ -171,8 +158,8 @@ class Creategroup extends Component {
 
 const mapDispatchToProps = (dispatch) =>{
     return{
-        createGroup: (groupName, description, imageUrl, join) =>{
-            dispatch(createGroup(groupName, description, imageUrl, join))
+        createGroup: (groupName, description, imageUrl) =>{
+            dispatch(createGroup(groupName, description, imageUrl))
         }
     }
 }

@@ -19,9 +19,7 @@ export default class GroupsDetails extends React.Component {
     componentDidMount() {
         firebase.database().ref(`Groups/`).on('value', snap => {
             let groupList = [];
-            console.log("aaaaaaaaaaa")
             let objGroup = snap.val();
-            console.log("obj", objGroup)
             for (let key in objGroup) {
                 groupList.push({ ...objGroup[key], key });
             }
@@ -35,7 +33,6 @@ export default class GroupsDetails extends React.Component {
     // }
     render() {
         const {groupList} = this.state
-        console.log("render", groupList)
         return (
             <View style={{ height: height - 75 }}>
                 <Header>

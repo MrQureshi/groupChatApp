@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { View, Button, Text, TextInput, Image, Dimensions, ScrollView } from 'react-native';
 import { connect } from 'react-redux'
-import { Confirmcode } from '../action'
+import { Confirmcode, logUser } from '../action'
 
 
 const { height, width, fontScale } = Dimensions.get("window")
@@ -22,38 +22,29 @@ class VerificationCode extends Component {
         };
     }
     componentWillReceiveProps(nextProps) {
-
-        console.log("nextProps in CodeConfirm", nextProps)
-        let userKey = nextProps && nextProps.User && nextProps.User.uid
-        // console.log("uid,", userKey)
-        if (userKey) {
-        this.props.navigation.navigate('UserDetail')            
+        console.log("nextPProp code", nextProps.logedUser)
+        
+        let currentUser = nextProps.logedUser
+        
+        // console.log("currentUsercurrentUser", currentUser)
+        if (currentUser) {
+            this.props.navigation.replace("Dashboard")
+        } else if (currentUser === false) {
+            this.props.navigation.replace("UserDetail")
         }
+    }
+    componentDidMount() {
+        this.props.logUser()
     }
 
     confirmCode = () => {
         const { codeInput } = this.state;
         const confirm = this.props.confirm;
-        // console.log(confirm)
         this.props.Confirmcode(codeInput, confirm)
-
-
-        // this.props.navigation.navigate('UserDetail')
-
-
-        // confirm.confirm(codeInput).then((res)=>{
-        //     console.log("user authticated", res)
-        //     if(res){
-        //         this.props.navigation.navigate('UserDetail')
-        //     }
-        // }).catch((error)=>{
-        //     console.log(error)
-        // })
     };
 
     render() {
         const { codeInput } = this.state;
-        console.log("render confirm", this.props.User)
         return (
             <View style={{ marginTop: 25, padding: 25, height: height }}>
                 <Text>Enter verification code below:</Text>
@@ -70,17 +61,18 @@ class VerificationCode extends Component {
     }
 }
 const mapStateToProps = (state) => {
-    console.log("mapStateToProps", state)
+    console.log("state confirmCode", state)
+
     return {
+        logedUser: state.Signin.logUser,
         confirm: state.Signin.confirm && state.Signin.confirm,
-        User: state.User.user
+        // User: state.User.user
     }
 }
 const mapDispatchToProps = (dispatch) => {
     return {
-        Confirmcode: (code, confirm) => {
-            dispatch(Confirmcode(code, confirm))
-        }
+        Confirmcode: (code, confirm) => { dispatch(Confirmcode(code, confirm)) },
+        logUser: () => { dispatch(logUser()) }
     }
 }
 export default connect(mapStateToProps, mapDispatchToProps)(VerificationCode)

@@ -5,66 +5,39 @@ const admin = require('firebase-admin')
 
 admin.initializeApp(functions.config().firebase);
 
-exports.pushNot = functions.database.ref('messages/{groupid}/{pushId}').onWrite(res => {
-    // console.log("??? res ???", res.after._data.groupKey)
+exports.pushNotifications = functions.database.ref('messages/{groupid}/{pushId}').onWrite(res => {
+    // console.log("??? res ???", res)
+    // console.log("data ???", res.after._data)
     let groupKey = res.after._data.groupKey
+    let Name = res.after._data.userName
+    let msg= res.after._data.textMsg    
     const payload = {
         notification: {
-            title: 'New Message',
-            body: 'new messageeee',
+            title: Name,
+            body: msg,
             priority: 'high',
             sound: 'default'
         }
     }
     // admin.messaging().sendToDevice("fHHNRO4v52Y:APA91bE3NwcKi9q78vZitgRZRA_9CYbnqbA2HM-vQismY9sjfeNR2JzlGTEzbg5G5unfS8oQUI-Z1mypaaKZxy2zIjqIac4utSq1tCtaQyowzIeQBhYWMAHGwDh9-zVwh0471LMSSCHo", payload)
     // console.log(evt)
-    return admin.database().ref(`Groups/${groupKey}/Token`).once("value").then(allToken => {
-        if (allToken.val()) {
+    return admin.database().ref(`Groups/${groupKey}/member`).once("value").then(allToken => {
+        // console.log("refAllToken", allToken.val() )
+        let obj = allToken.val()
+        let getTokens = []
+        for(let key in obj){
+            // console.log("TTT",obj[key].Token)
+            getTokens.push(obj[key].Token)
+
+        }
+        // console.log("what", getTokens)
+        if (getTokens) {
             // return console.log("avail", allToken.val());
-            const token = Object.keys(allToken.val())
-            console.log("token????<>", token)
+            const token = getTokens
+            console.log("avail", token)
             return admin.messaging().sendToDevice(token, payload)
         } else {
             return console.log("Not avail")
         }
     })
 })
-
-exports.abc = functions.https.onRequest((request, response) => {
-
-})
-// exports.sendNotification = functions.database.ref('/messages/{id}/{pushId}')
-// exports.sendNotification = functions.database.ref('/messages/{pushId}/{pushId}')
-
-// Listens for new messages added to messages/:pushId
-// exports.pushNotification = functions.database.ref('/messages/{pushId}')
-
-//     // functions.database.ref('/messages/{id}')
-
-
-//     .onCreate(event => {
-//         const root = event.data.ref.root
-//         var messages = []
-
-//         return root.child('/Groups/{pushId}/member/{pushId}').once('value').then(function(snapshot){
-//             snapshot.forEach(function(childSnapshot){
-//                 var Token = childSnapshot.val().Token
-//                 if(Token){
-//                     messages.push({
-//                         'to': Token,
-//                         'body':'New Message '
-//                     })
-//                 }
-//             })
-//             return Promise.all(messages)
-//         }).then(messages =>{
-//             fetch(messages,{
-//                 method:'POST', 
-//                 header:{
-//                     'Accept':'application/json',
-//                     'Content-Type': 'application/json'
-//                 },
-//                 body: JSON.stringify(mess)
-//             })
-//         })
-//     })

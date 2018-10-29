@@ -1,5 +1,30 @@
 import firebase from 'react-native-firebase';
+import Admin from '../components/Admin';
+import { compose } from 'redux';
 
+export const logUser = () => {
+    return dispatch => {
+        firebase.auth().onAuthStateChanged(user => {
+            if (user) {
+                firebase.database().ref(`user/${user.uid}/`).on('value', snap => {
+                    if (snap.val()) {
+                        // let user = snap.val()
+                        return dispatch({
+                            type: "LOG_USER",
+                            payload: snap.val()
+                        })
+                    }
+                    else {
+                        return dispatch({
+                            type: "NOT_LOG",
+                            payload: false
+                        })
+                    }
+                })
+            }
+        })
+    }
+}
 export const Signin = (phoneNumber) => {
     return dispatch => {
         firebase.auth().signInWithPhoneNumber(phoneNumber)
@@ -15,24 +40,19 @@ export const Signin = (phoneNumber) => {
 
 export const Confirmcode = (code, confirm) => {
     return dispatch => {
-        console.log("action confirm", code, confirm)
         confirm.confirm(code)
             .then((res) => {
-                console.log("ress", res._user)
                 dispatch({
                     type: "CONFIRM_CODE",
                     user: res._user
                 })
-                // console.log("user authticated", res)
             }).catch((error) => {
-                console.log(error)
             })
     }
 }
 
 export const userDetail = (userKey, phoneNumber, userName, rollNum) => {
     return dispatch => {
-        // console.log("User Detail", userKey, phoneNumber, userName, rollNum)
 
         firebase.database().ref(`user/${userKey}/`).set({
             phoneNumber: phoneNumber,
@@ -41,7 +61,6 @@ export const userDetail = (userKey, phoneNumber, userName, rollNum) => {
             rollNumber: rollNum
         })
         let data = { userKey, phoneNumber, userName, rollNum };
-        // console.log('data then ', data)
         if (data) {
             dispatch({
                 type: "USER_DETAIL",
@@ -50,13 +69,12 @@ export const userDetail = (userKey, phoneNumber, userName, rollNum) => {
         }
     }
 }
-export const createGroup = (groupName, description, imageUrl, join) => {
-    console.log("action createGroup", groupName, description, imageUrl, join)
+export const createGroup = (groupName, description, imageUrl) => {
     return dispatch => {
         firebase.database().ref().child("Groups/").push({
-            groupName, description, imageUrl, join
+            groupName, description, imageUrl
         }).then(() => {
-            let data = { groupName, description, imageUrl, join };
+            let data = { groupName, description, imageUrl };
             if (data) {
                 dispatch({
                     type: "CREATE_GROUP",
@@ -64,7 +82,6 @@ export const createGroup = (groupName, description, imageUrl, join) => {
                 })
             }
         }).catch((error) => {
-            console.log(error)
         })
     }
 }
@@ -74,9 +91,7 @@ export const groupList = () => {
         // alert("reached")
         firebase.database().ref(`Groups/`).on('value', snap => {
             let groupList = [];
-            // console.log("aaaaaaaaaaa")
             let objGroup = snap.val();
-            // console.log("obj", objGroup)
             for (let key in objGroup) {
                 groupList.push({ ...objGroup[key], key });
             }
@@ -87,115 +102,176 @@ export const groupList = () => {
         })
     }
 }
-export const addMember = (key) => {
-    console.log("Actionsss", key)
-
+export const requestHandle = (groupKey, userName) => {
     return () => {
         let Currentuser = firebase.auth().currentUser
         let uid = Currentuser.uid
         let phoneNumber = Currentuser.phoneNumber
 
         firebase.messaging().getToken()
-        .then(Token => {
-            if (Token) {
-                firebase.database().ref(`Groups/${key}/Token/${Token}`).set({ Token})
-            }})
-
-        firebase.messaging().getToken()
             .then(Token => {
                 if (Token) {
-                    // user has a device token
-                    // console.log("?><", Token)
-                    if (Token) {
-                        firebase.database().ref(`Groups/${key}/member/${uid}`).set({ phoneNumber, Token })
-                    }
+                    // firebase.database().ref(`Groups/${key}/Token/${Token}`).set({ Token: "" })
+                    firebase.database().ref(`Groups/${groupKey}/Request/${uid}`).set({ phoneNumber, userName, Token, groupKey })
                 }
-            }
-            );
+            })
     }
 }
-export const getSeletcedGroup = (list) => {
-    return dispatch => {
-        // console.log("getSeletcedGroup", list)
-        // console.log("getSeletcedGroupKeyyy", list.key)
 
+export const acceptRequest = (groupKey, Token, userName, userKey, phoneNumber) => {
+    return () => {
+        firebase.database().ref(`Groups/${groupKey}/member/${userKey}`).set({ Token: Token, userName: userName, phoneNumber: phoneNumber }).then(
+            firebase.database().ref(`Groups/${groupKey}/Request/${userKey}`).remove()
+        )
+    }
+}
+
+export const rejectRequest = (groupKey, userKey) => {
+    return () => {
+        firebase.database().ref(`Groups/${groupKey}/Request/${userKey}`).remove()
+    }
+}
+export const getSelectedGroup = (list) => {
+    return dispatch => {
 
         firebase.database().ref(`messages/${list.key}`).on('value', snap => {
-            // console.log("abc", snap.val())
             let messages = []
             let objMsg = snap.val()
             for (let key in objMsg) {
                 messages.push({ ...objMsg[key], key });
             }
-
             dispatch({
                 type: "SELECTED_GROUP",
-                SeletcedGroup: list,
+                SelectedGroup: list,
                 Messages: messages
             })
         })
     }
 }
-export const sendMessage = (textMsg, groupKey) => {
-    // console.log("Action MSG", textMsg, groupKey)
+
+export const sendMessage = (textMsg, groupKey, groupName, msgTime) => {
     return () => {
-        //  const sendNotification =  
-        //  firebase.database().ref(`messages/`).on('value', snap=>{
-
-        //      console.log("sendNotification", snap)
-        //  })
-
-
         let Currentuser = firebase.auth().currentUser.uid
 
         if (Currentuser) {
             firebase.database().ref(`user/${Currentuser}/`).on('value', snap => {
-                // console.log("Snappp", snap.val())
-                // console.log("textMsg", textMsg)
 
                 objUser = snap.val()
                 let userName = objUser.userName
                 let userKey = objUser.userKey
                 let rollNumber = objUser.rollNumber
                 let phoneNumber = objUser.phoneNumber
-
-                // firebase.database().ref(`messages/`).push(
-                //     {
-                //         userName,
-                //         userKey,
-                //         rollNumber,
-                //         phoneNumber,
-                //         groupKey,
-                //         textMsg,
-                //     }
-                // )
-
                 firebase.database().ref(`messages/${groupKey}`).push(
                     {
-                        userName,
-                        userKey,
-                        rollNumber,
-                        phoneNumber,
-                        groupKey,
-                        textMsg,
+                        userName, userKey, rollNumber, phoneNumber, groupKey, textMsg, groupName, msgTime
                     }
                 )
             })
         }
     }
 }
-// export const getMessageOfSelectedGroup = (grpKey) => {
+
+export const allMessage = (userKey) => {
+    return dispatch => {
+        firebase.database().ref(`Groups`).on('value', snap => {
+            let objgroup = snap.val()
+            let groupKeys = Object.keys(objgroup)
+            var GroupsKeysHaveCurrentUser = []
+            groupKeys.forEach((getGroupKeys, i) => {
+                if (objgroup[getGroupKeys].member) {
+
+                    var memberKey = Object.keys(objgroup[getGroupKeys].member)
+
+                    var getGroupsKeysHaveCurrentUser = memberKey.filter(ii => {
+                        return userKey === ii
+                    })
+                    if (getGroupsKeysHaveCurrentUser.length) {
+                        GroupsKeysHaveCurrentUser.push(getGroupKeys);
+
+                    }
+                }
+            })
+
+
+            firebase.database().ref(`messages`).on('value', snap => {
+                let obj = snap.val()
+
+                let getMessages = []
+                GroupsKeysHaveCurrentUser.forEach(k => {
+                    getMessages.push(obj[k])
+                })
+                let allMessages = []
+
+                for (let key in getMessages) {
+                    let data = getMessages[key]
+                    for (let allMsg in data) {
+                        allMessages.push(data[allMsg])
+                    }
+                }
+
+                dispatch({
+                    type: "ALL_MESSAGES",
+                    allMessages
+                })
+            })
+        })
+    }
+}
+
+export const Requests = (groupKey) => {
+
+    // return dispatch  => {
+    //     dispatch({
+    //         type: "REQUEST",
+    //         payload:request
+    //     })
+    // }
+    return dispatch => {
+        firebase.database().ref(`Groups/${groupKey}/Request`).on('value', snap => {
+            // this.props.Requests(request)
+            let Request = snap.val()
+            let requests = []
+            for (let key in Request) {
+                requests.push({ ...Request[key], userkey: key })
+            }
+            dispatch({
+                type: "REQUEST",
+                payload: requests
+            })
+        })
+    }
+}
+// export const clearState = ()=>{
 //     return dispatch => {
-//         console.log("getMessageOfSelectedGroup", grpKey)
-//         // console.log('dispatch')
-//         firebase.database().ref(`messages/${grpKey}`).on('value', snap => {
-//             // console.log("getMasges", snap.val())
-//             Messages = snap.val()
-//             // console.log("Messages", Messages)
-//             dispatch({
-//                 type: "SELECTED_GROUPMESSAGE",
-//                 groupMessages: Messages
-//             })
+//         dispatch({
+//             type: "CLEAR_STATE",
+//             payload: undefined
 //         })
 //     }
-// }
+
+// } 
+export const ViewMembers = (groupKey) => {
+    return dispatch => {
+        firebase.database().ref(`Groups/${groupKey}/member`).on('value', snap => {
+            let member = snap.val()
+            let Members = []
+            for (let key in member) {
+                Members.push({ ...member[key], userkey: key, groupKey })
+            }
+            dispatch({
+                type: "MEMBERS",
+                payload: Members
+            })
+        })
+    }
+}
+export const makeAdmin = (groupKey, userKey, Token, userName, phoneNumber) => {
+    return () => {
+        firebase.database().ref(`Groups/${groupKey}/member/${userKey}`).set({ Token: Token, userName: userName, phoneNumber: phoneNumber, Admin: 'Admin' })
+        // .then(
+        //     firebase.database().ref(`Groups/${groupKey}/Request/${userKey}`).remove()
+        // )
+    }
+}
+
+

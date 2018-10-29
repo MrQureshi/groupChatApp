@@ -13,6 +13,7 @@
     "react-native-fcm": "^16.2.3",
     "react-native-firebase": "^5.0.0",
     "react-native-image-picker": "^0.26.10",
+    "react-native-popup-dialog": "^0.15.1",
     "react-native-router-flux": "^4.0.5",
     "react-navigation": "2.17.0",
     "react-phone-number-input": "^2.2.9",
