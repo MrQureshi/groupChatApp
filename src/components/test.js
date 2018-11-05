@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import { Alert, Modal, Text, View, Button, TouchableOpacity } from 'react-native';
+import { Modal, Text, View, Button, TouchableOpacity } from 'react-native';
 import { Form, Item, Input, Label, Icon, Left, Content } from 'native-base';
 import firebase from 'react-native-firebase'
 import ImagePicker from 'react-native-image-picker';
 import { createGroup } from '../action';
-import { connect } from 'react-redux';
+import {connect} from 'react-redux';
 
 
 
@@ -54,7 +54,7 @@ class Creategroup extends Component {
         const { groupName, description, imageUrl } = this.state
 
         this.props.createGroup(groupName, description, imageUrl)
-
+        
         this.setState({
             groupName: '',
             description: '',
@@ -70,27 +70,28 @@ class Creategroup extends Component {
         this.props.close()
     }
     handleSubmit = () => {
-        const { avatarSource, groupName, description } = this.state;
+        const { avatarSource } = this.state;
+        
+        let uri = avatarSource
 
-        if (groupName && description && avatarSource) {
-            let uri = avatarSource
+        const storageRef = firebase.storage().ref("/images/" + uri);
 
-            const storageRef = firebase.storage().ref("/images/" + uri);
-
-            storageRef.put(this.state.avatarSource).then((snap) => {
-                storageRef.getDownloadURL().then((res) => {
-                    this.setState({
-                        imageUrl: res,
-                    })
-                    // alert("get Url")
-                    this.pushData()
+        storageRef.put(this.state.avatarSource).then((snap) => {
+            storageRef.getDownloadURL().then((res) => {
+                this.setState({
+                    imageUrl: res,  
                 })
+                // alert("get Url")
+                // this.pushData()
             })
-        } else {
-            Alert.alert('Please Enter All Fields.', '', null, { cancelable: false })
-        }
+        })
 
     }
+
+changeTextHandler = (v, n) => {
+    this.setState({[n]: v});
+    alert(n, v)
+}
 
     render() {
         const { groupName, description, avatarSource, imageUrl } = this.state
@@ -112,27 +113,34 @@ class Creategroup extends Component {
                                     <Icon name="close" />
                                 </Text>
                             </TouchableOpacity>
-                            <Text style={{ textAlign: "center", fontSize: 25 }}>Create Group</Text>
+                            <Text style={{ textAlign: "center", fontSize: 25 }}>Create Group V-1</Text>
                             <Form>
-                                <Item fixedLabel>
+                                <Item floatingLabel>
                                     <Label>Group Name</Label>
                                     <Input
-                                        onChangeText={value => this.setState({ groupName: value })}
-                                        value={groupName} />
+                                        onChangeText={value => { (v) => this.changeTextHandler(v, 'groupName') }}
+                                        value={groupName}
+                                    />
                                 </Item>
-                                <Item fixedLabel>
+                                <Item floatingLabel>
                                     <Label>Description</Label>
                                     <Input
-                                        onChangeText={value => this.setState({ description: value })}
+                                        onChangeText={value => { (v) => this.changeTextHandler(v, 'description') }}
                                         value={description}
                                     />
                                 </Item>
                                 <TouchableOpacity style={{ flexDirection: "row", justifyContent: 'space-between', padding: 5, marginTop: 25, marginLeft: 12, height: 35 }} onPress={this.picImage} >
                                     <Label style={{ color: '#696969', }}  >Upload Image</Label>
                                     <Text style={{ justifyContent: 'flex-end', paddingRight: 40 }} >
-                                        <Icon style={this.state.avatarSource ? { color: "green" } : { color: "gray" }} name="camera" ></Icon>
+                                        <Icon style={this.state.avatarSource ? { color: "green"  }: { color: "gray" }} name="camera" ></Icon>
                                     </Text>
                                 </TouchableOpacity>
+                                {
+                                    this.state.avatarSource?
+                                    alert("avatarSource uploaded")
+                                    :
+                                    null
+                                }
                                 {
                                     this.state.imageUrl ?
                                         <Text style={{ color: '#696969', textAlign: 'right' }} >Image Uploaded</Text> :
@@ -140,10 +148,12 @@ class Creategroup extends Component {
                                 }
 
                                 <Text>{"\n"}</Text>
-                                <Button title="Submit" color="#66CCFF"
+                                <Button title="Submit" color="green"
+                                    disabled={isInvalid}
                                     onPress={this.handleSubmit} />
-                            </Form>
+                                {/* onPress={() => { this.props.close() }} /> */}
 
+                            </Form>
                         </View>
                     </View>
                 </Modal>
@@ -157,9 +167,9 @@ class Creategroup extends Component {
 //     }
 // }
 
-const mapDispatchToProps = (dispatch) => {
-    return {
-        createGroup: (groupName, description, imageUrl) => {
+const mapDispatchToProps = (dispatch) =>{
+    return{
+        createGroup: (groupName, description, imageUrl) =>{
             dispatch(createGroup(groupName, description, imageUrl))
         }
     }

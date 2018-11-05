@@ -2,34 +2,51 @@ import React, { Component } from 'react'
 import { Text, Dimensions, TouchableOpacity } from 'react-native'
 import { connect } from "react-redux"
 import { Header, View, Button, Icon, Left, Body, Title, Right, ListItem, } from 'native-base';
-import { acceptRequest, rejectRequest, } from '../action'
+import { acceptRequest, rejectRequest, AllRequests } from '../action'
 // import firebase from 'react-native-firebase'
 
 const { height, width, fontScale } = Dimensions.get("window")
 
 
-class superAdmin extends Component {
-    constructor(props){
+class comAllRequests extends Component {
+    constructor(props) {
         super(props)
 
-        this.state ={
+        this.state = {
             requestList: []
         }
     }
-    // componentWillReceiveProps(nextProps){
-    // }
+    componentDidMount() {
+        this.props.AllRequests();
+    }
     handleAccept = (rList) => {
+
+
         const { groupKey, Token, userName, userkey, phoneNumber } = rList
+
 
         this.props.acceptRequest(groupKey, Token, userName, userkey, phoneNumber)
     }
     handleReject=(rList)=>{
         const { groupKey, userkey } = rList
 
+
         this.props.rejectRequest(groupKey, userkey)
     }
+
+    // componentWillReceiveProps(nextProps){
+    // }
+    // handleAccept = (rList) => {
+    //     const { groupKey, Token, userName, userkey, phoneNumber } = rList
+    //     this.props.acceptRequest(groupKey, Token, userName, userkey, phoneNumber)
+    // }
+    // handleReject=(rList)=>{
+    //     const { groupKey, userkey } = rList
+    //     this.props.rejectRequest(groupKey, userkey)
+    // }
     render() {
         const reqList = this.props.reqList && this.props.reqList
+
 
         return (
             <View style={{ height: height - 75 }}>
@@ -45,16 +62,19 @@ class superAdmin extends Component {
                     <Right />
                 </Header>
                 <View>
-                    {reqList?
+                    {
+                        reqList && reqList.length ?
                         reqList.map((rList, index) => {
                             return (
                                 <ListItem key={index} >
                                     <Body>
                                         <Text>{rList.userName}</Text>
+                                        <Text note style={{color: 'green'}} >{rList.groupName}</Text>
+
                                     </Body>
                                     <Right style={{ flexDirection: "row", justifyContent: "flex-end" }}>
                                         <TouchableOpacity onPress={() => this.handleAccept(rList)}>
-                                            <Text  >
+                                            <Text >
                                                 <Icon style={{ fontSize: 22, color: "black" }} name="checkmark" />
                                             </Text>
                                         </TouchableOpacity>
@@ -68,7 +88,7 @@ class superAdmin extends Component {
                             )
                         })
                         :
-                        <View><Text style={{justifyContent:"center", textAlign:"center" }} >No request</Text></View>
+                        <Text style={{ justifyContent: "center", textAlign: "center" }} >No request</Text>
                     }
                 </View>
             </View>
@@ -78,16 +98,16 @@ class superAdmin extends Component {
 const mapStateToProps = (state) => {
     return {
         // logUser: state.Signin.logUser,
-        reqList: state.Requests.requests,
-        // allstate : state
+        reqList: state.Requests.Allrequests,
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
+        AllRequests: () => dispatch(AllRequests()),
         acceptRequest: (groupKey, Token, userName, userkey, phoneNumber) => dispatch(acceptRequest(groupKey, Token, userName, userkey, phoneNumber)),
         rejectRequest: (groupKey, userkey)=>dispatch(rejectRequest(groupKey, userkey))
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(superAdmin)
+export default connect(mapStateToProps, mapDispatchToProps)(comAllRequests)

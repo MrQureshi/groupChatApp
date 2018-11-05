@@ -28,7 +28,7 @@ class Members extends Component {
         const memList = this.props.membersList && this.props.membersList
         return (
             <View style={{ height: height - 75 }}>
-                <Header>
+                <Header style={{ backgroundColor:"#66CCFF"}}>
                     <Left>
                         <Button transparent>
                             <Icon name='menu' />

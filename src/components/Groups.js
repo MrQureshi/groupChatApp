@@ -7,7 +7,7 @@ import { Text, Dimensions, ScrollView, TouchableOpacity, TouchableHighlight } fr
 import firebase from 'react-native-firebase'
 import Create from '../components/createGroup'
 import { connect } from 'react-redux'
-import { groupList, requestHandle, getSelectedGroup, Requests } from '../action'
+import { groupList, requestHandle, getSelectedGroup, Requests ,deleteGroup} from '../action'
 const { height, width, fontScale } = Dimensions.get("window")
 
 
@@ -18,7 +18,7 @@ class GroupsDetails extends React.Component {
         super(props);
         this.state = {
             showModal: false,
-            grplist:[]
+            grplist: []
             // tab: 0,
         }
     }
@@ -35,34 +35,27 @@ class GroupsDetails extends React.Component {
         this.setState({
             grplist: props.GroupList
         })
-        // if (props.GroupList) {
-        //     props.tabRef.goToPage(1)
-
-        // }
-        // if (props.SelectedGroup) {
-        //     props.tabRef.goToPage(0)
-        // }
-        // if (props.reqList) {
-        //     this.props.tabRef.goToPage(2)
-        // }
+    
     }
-    handleRequest = (groupKey) => {
+    handleRequest = (SelectedGroup) => {
+        const { key, groupName } = SelectedGroup
         let { userName } = this.props.logUser
-        this.props.requestHandle(groupKey, userName)
+        this.props.requestHandle(key, groupName, userName)
     }
     viewRequest = (key) => {
         this.props.Requests(key)
-
         // this.props.navigation.navigate("Dashboard")
-
+    }
+    handleDelete= (groupKey)=>{
+        this.props.deleteGroup(groupKey)
     }
     render() {
         const Currentuser = this.props.logUser.userKey
         const user = this.props.logUser && this.props.logUser.user
 
         return (
-            <View style={{ height: height - 75 }}>
-                <Header>
+            <View style={{ height: height - 70 }} >
+                <Header style={{ backgroundColor: "#66CCFF" }} >
                     <Left>
                         <Button transparent>
                             <Icon name='menu' />
@@ -73,7 +66,7 @@ class GroupsDetails extends React.Component {
                     </Body>
                     <Right />
                 </Header>
-                <View style={{ paddingBottom: 60 }}>
+                <View style={{ paddingBottom: 130 }}>
                     <ScrollView>
                         <List>
                             {
@@ -81,12 +74,12 @@ class GroupsDetails extends React.Component {
                                     let member = gList.member ? Object.keys(gList.member) : []
                                     let arrRequest = gList.Request ? Object.keys(gList.Request) : []
                                     let request = arrRequest.length
-
                                     return (
                                         user === 'superUser' ?
-                                            <ListItem thumbnail key={index} >
+                                            <ListItem thumbnail key={index}>
                                                 <TouchableOpacity style={{ flexDirection: "row" }}
-                                                    onPress={() => { this.selectGroup(gList); this.props.tabRef.goToPage(0) }}
+                                                    // onPress={() => { this.selectGroup(gList); this.props.tabRef.goToPage(0) }}
+                                                    onPress={() => { this.selectGroup(gList); this.props.navigation.navigate('Groupselected') }}
                                                 >
                                                     <Left>
                                                         <Thumbnail square source={{ uri: gList.imageUrl }} />
@@ -97,24 +90,27 @@ class GroupsDetails extends React.Component {
                                                     </Body>
                                                     <Right>
                                                         {
-                                                            request ?
-                                                                <TouchableOpacity onPress={() => { this.viewRequest(gList.key); this.props.tabRef.goToPage(2) }}>
+                                                            request
+                                                                ?
+                                                                <TouchableOpacity onPress={() => { this.viewRequest(gList.key); this.props.navigation.navigate('Admin') }}>
                                                                     <Text style={{ color: 'green' }}  >{request} Request</Text>
                                                                 </TouchableOpacity> :
                                                                 <Text >No Request</Text>
                                                         }
-                                                        {/* <TouchableOpacity>
-                                                        <Text style={{ color: 'green' }}  >{request} Make your self a memeber</Text>
-                                                        </TouchableOpacity> */}
 
-
+                                                    </Right>
+                                                    <Right style={{paddingLeft:20}} >
+                                                        <TouchableOpacity onPress={() => { this.handleDelete(gList.key)}} >
+                                                            <Icon name="md-close" style={{color:"green"}} ></Icon>
+                                                        </TouchableOpacity>
                                                     </Right>
                                                 </TouchableOpacity>
                                             </ListItem>
                                             :
                                             <ListItem thumbnail key={index} >
                                                 <TouchableOpacity disabled={member.indexOf(Currentuser) === -1} style={{ flexDirection: "row" }}
-                                                    onPress={() => {this.selectGroup(gList); this.props.tabRef.goToPage(0)}}
+                                                    // onPress={() => {this.selectGroup(gList); this.props.tabRef.goToPage(0)}}
+                                                    onPress={() => { this.selectGroup(gList); this.props.navigation.navigate('Groupselected') }}
                                                 >
                                                     <Left>
                                                         <Thumbnail square source={{ uri: gList.imageUrl }} />
@@ -126,7 +122,7 @@ class GroupsDetails extends React.Component {
                                                     <Right>
                                                         {
                                                             member.indexOf(Currentuser) !== -1 ? <View><Text>View</Text></View> :
-                                                                <TouchableOpacity onPress={() => this.handleRequest(gList.key)} >
+                                                                <TouchableOpacity onPress={() => this.handleRequest(gList)} >
                                                                     <Text>Join</Text>
                                                                 </TouchableOpacity>
                                                         }
@@ -144,8 +140,7 @@ class GroupsDetails extends React.Component {
                 {
                     user === 'superUser'
                         ?
-                        <Fab
-                            style={{ alignContent: "center", backgroundColor: '#5067FF', marginTop: 20, position: "absolute" }}
+                        <Fab style={{ alignContent: "center", backgroundColor: "#66CCFF", marginTop: 20, position: "absolute" }}
                             position="bottomRight"
                             onPress={() => this.setState({ showModal: true, })}>
                             <Icon name="add" />
@@ -174,9 +169,10 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
     return {
         groupList: () => dispatch(groupList()),
-        requestHandle: (groupKey, userName) => dispatch(requestHandle(groupKey, userName)),
+        requestHandle: (key, groupName, userName) => dispatch(requestHandle(key, groupName, userName)),
         getSelectedGroup: (list) => dispatch(getSelectedGroup(list)),
-        Requests: (key) => dispatch(Requests(key))
+        Requests: (key) => dispatch(Requests(key)),
+        deleteGroup: (groupKey) => dispatch(deleteGroup(groupKey))
     }
 }
 

@@ -30,30 +30,21 @@ class UserDetails extends React.Component {
         let phoneNumber = firebase.auth().currentUser._user.phoneNumber
         this.props.userDetail(userKey, phoneNumber, userName, rollNum)
     }
-    signOut = () => {
-        firebase.auth().signOut().then(()=>{
-            this.props.navigation.navigate("Authnumber")
-        });
-    }
+    // signOut = () => {
+    //     firebase.auth().signOut().then(()=>{
+    //         this.props.navigation.navigate("Authnumber")
+    //     });
+    // }
     render() {
         const { userName, rollNum } = this.state
+        const IsValid = userName === '' || rollNum === ''; 
         return (
-            // <View>
-            //     <Text>userInput</Text>
-            //     <Button title="Sign Out" color="red" onPress={this.signOut} />
-            // </View>
 
-
-            // <ScrollView>
             <Container style={{
                 padding: 30,
                 paddingTop: 60
             }}  >
-                {/* <Header /> */}
-                <Content  >
-                    {/* <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
-                        <Text style={{ fontSize: 30 }}  >User Details</Text>
-                    </View> */}
+                <Content >
                     <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1, }} >
                         <Image source={{ uri: successImageUri }} style={{ width: 100, height: 100, marginBottom: 25 }} />
                     </View>
@@ -73,14 +64,11 @@ class UserDetails extends React.Component {
                                 value={rollNum}
                             />
                         </Item>
-                        <Button title="submit" color="green" onPress={this.handleSubmit} />
-                        <Button title="submit" color="green" onPress={this.signOut} />
+                        <Button title="submit" disabled={IsValid} color="#66CCFF" onPress={this.handleSubmit} />
 
                     </Form>
                 </Content>
             </Container>
-
-            // </ScrollView>
         )
     }
 }

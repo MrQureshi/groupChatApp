@@ -102,7 +102,7 @@ export const groupList = () => {
         })
     }
 }
-export const requestHandle = (groupKey, userName) => {
+export const requestHandle = (groupKey, groupName, userName) => {
     return () => {
         let Currentuser = firebase.auth().currentUser
         let uid = Currentuser.uid
@@ -112,7 +112,7 @@ export const requestHandle = (groupKey, userName) => {
             .then(Token => {
                 if (Token) {
                     // firebase.database().ref(`Groups/${key}/Token/${Token}`).set({ Token: "" })
-                    firebase.database().ref(`Groups/${groupKey}/Request/${uid}`).set({ phoneNumber, userName, Token, groupKey })
+                    firebase.database().ref(`Groups/${groupKey}/Request/${uid}`).set({ phoneNumber, userName, groupName, Token, groupKey })
                 }
             })
     }
@@ -175,7 +175,13 @@ export const allMessage = (userKey) => {
     return dispatch => {
         firebase.database().ref(`Groups`).on('value', snap => {
             let objgroup = snap.val()
+            if (objgroup === null) {
+                return objgroup = {}
+            }
+            // console.log("11111", objgroup)
             let groupKeys = Object.keys(objgroup)
+
+            // console.log("12345", groupKeys)
             var GroupsKeysHaveCurrentUser = []
             groupKeys.forEach((getGroupKeys, i) => {
                 if (objgroup[getGroupKeys].member) {
@@ -187,14 +193,15 @@ export const allMessage = (userKey) => {
                     })
                     if (getGroupsKeysHaveCurrentUser.length) {
                         GroupsKeysHaveCurrentUser.push(getGroupKeys);
-
                     }
                 }
             })
 
-
             firebase.database().ref(`messages`).on('value', snap => {
                 let obj = snap.val()
+                if (obj === null) {
+                    return obj = {}
+                }
 
                 let getMessages = []
                 GroupsKeysHaveCurrentUser.forEach(k => {
@@ -208,11 +215,32 @@ export const allMessage = (userKey) => {
                         allMessages.push(data[allMsg])
                     }
                 }
+                allMessages.sort((a, b) => a.msgTime - b.msgTime)
 
                 dispatch({
                     type: "ALL_MESSAGES",
                     allMessages
                 })
+            })
+        })
+    }
+}
+export const allMessagesForSuperAdmin = () => {
+    return dispatch => {
+        firebase.database().ref(`messages`).on('value', snap => {
+            let objMsg = snap.val()
+            let aryMessagesForSuperAdmin = []
+            for (let key in objMsg) {
+                let getData = objMsg[key]
+                for (let al in getData) {
+                    aryMessagesForSuperAdmin.push(getData[al])
+                }
+            }
+            aryMessagesForSuperAdmin.sort((a, b) => a.msgTime - b.msgTime)
+
+            dispatch({
+                type: "ALLMESSAGES_SUPERADMIN",
+                payload: aryMessagesForSuperAdmin
             })
         })
     }
@@ -237,6 +265,28 @@ export const Requests = (groupKey) => {
             dispatch({
                 type: "REQUEST",
                 payload: requests
+            })
+        })
+    }
+}
+export const AllRequests = () => {
+
+
+    return dispatch => {
+        firebase.database().ref(`Groups`).on('value', snap => {
+            let getObj = snap.val()
+            let AllReq = []
+            for (let key in getObj) {
+                let reqData = getObj[key].Request && getObj[key].Request
+
+                for (let r in reqData) {
+                    AllReq.push({ ...reqData[r], userkey: r })
+                }
+            }
+
+            dispatch({
+                type: "ALLREQUEST",
+                payload: AllReq
             })
         })
     }
@@ -271,6 +321,14 @@ export const makeAdmin = (groupKey, userKey, Token, userName, phoneNumber) => {
         // .then(
         //     firebase.database().ref(`Groups/${groupKey}/Request/${userKey}`).remove()
         // )
+    }
+}
+export const deleteGroup = (groupKey) => {
+    return () => {
+
+        firebase.database().ref(`Groups/${groupKey}`).remove();
+        firebase.database().ref(`messages/${groupKey}`).remove();
+
     }
 }
 

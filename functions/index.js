@@ -9,11 +9,12 @@ exports.pushNotifications = functions.database.ref('messages/{groupid}/{pushId}'
     // console.log("??? res ???", res)
     // console.log("data ???", res.after._data)
     let groupKey = res.after._data.groupKey
-    let Name = res.after._data.userName
+    // let Name = res.after._data.userName
+    let groupName = res.after._data.groupName
     let msg= res.after._data.textMsg    
     const payload = {
         notification: {
-            title: Name,
+            title: groupName,
             body: msg,
             priority: 'high',
             sound: 'default'

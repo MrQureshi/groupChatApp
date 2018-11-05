@@ -7,7 +7,8 @@ import { Container, Header, Content, Tab, Tabs, View, Icon, TabHeading } from 'n
 // import firebase from 'react-native-firebase'
 import Chat from '../components/Chat'
 import Group from '../components/Groups'
-import Admin from '../components/Admin'
+import Allrequest from '../components/AllRequests'
+// import Admin from '../components/Admin'
 import {clearState} from '../action'
 const { height, width, fontScale } = Dimensions.get("window")
 
@@ -33,17 +34,17 @@ class Dashboard extends React.Component {
         const user = this.props.logUser && this.props.logUser.user
         return (
             <Tabs  ref={(ref) => { this.tabRef = ref; }}  tabBarPosition="bottom">
-
-                <Tab heading={<TabHeading><Icon name="chatbubbles" /></TabHeading>}>
+                <Tab  heading={<TabHeading style={{ backgroundColor:"#66baff"}} ><Icon color="red" name="chatbubbles" /></TabHeading>}>
                     <Chat navigation={this.props.navigation} tabRef={this.state.tabs} />
                 </Tab>
-                <Tab  heading={<TabHeading><Icon name="people" /></TabHeading>}>
-                    <Group tabRef={this.state.tabs} />
+                <Tab heading={<TabHeading style={{ backgroundColor:"#66baff"}} ><Icon name="people" /></TabHeading>} >
+                    <Group navigation={this.props.navigation} tabRef={this.state.tabs} />
                 </Tab>
                 {
                     user === "superUser" ?
-                        <Tab heading={<TabHeading><Icon name="person-add" /></TabHeading>}>
-                            <Admin tabRef={this.state.tabs} />
+                        <Tab heading={<TabHeading style={{ backgroundColor:"#66baff"}}><Icon name="person-add" /></TabHeading>}>
+                            {/* <Admin tabRef={this.state.tabs} /> */}
+                            <Allrequest tabRef={this.state.tabs}/>
                         </Tab>
                         : null
                 }

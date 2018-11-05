@@ -6,11 +6,15 @@ import UserDetail from './src/containers/Userdetails'
 import Dashboard from './src/containers/Dashboard'
 // import ChatTab from './src/components/Chat'
 import Admin from './src/components/Admin'
+import Groupselected from './src/components/SelectedGroups'
+import Allrequest from './src/components/AllRequests'
 import firebase from 'react-native-firebase'
 import Members from './src/components/Members'
 import store from './src/store'
 import { Provider } from 'react-redux'
 import { logUser } from './src/action'
+
+// Admin
 // import { connect } from 'react-redux'
 
 import { createStackNavigator } from 'react-navigation';
@@ -22,7 +26,9 @@ const AppStackNavigator = createStackNavigator({
   Dashboard: Dashboard,
   // ChatTab: ChatTab,
   Admin: Admin,
-  Members:Members
+  Members:Members,
+  Groupselected: Groupselected,
+  Allrequest:Allrequest
 }, { headerMode: "none" })
 
 class App extends Component {
