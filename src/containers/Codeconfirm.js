@@ -22,11 +22,9 @@ class VerificationCode extends Component {
         };
     }
     componentWillReceiveProps(nextProps) {
-        console.log("nextPProp code", nextProps.logedUser)
         
         let currentUser = nextProps.logedUser
         
-        // console.log("currentUsercurrentUser", currentUser)
         if (currentUser) {
             this.props.navigation.replace("Dashboard")
         } else if (currentUser === false) {
@@ -61,7 +59,6 @@ class VerificationCode extends Component {
     }
 }
 const mapStateToProps = (state) => {
-    console.log("state confirmCode", state)
 
     return {
         logedUser: state.Signin.logUser,

@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
 import { Alert, Modal, Text, View, Button, TouchableOpacity } from 'react-native';
-import { Form, Item, Input, Label, Icon, Left, Content } from 'native-base';
+import { Form, Item, Input, Label, Icon, Left, Content, Thumbnail, Image } from 'native-base';
 import firebase from 'react-native-firebase'
 import ImagePicker from 'react-native-image-picker';
 import { createGroup } from '../action';
 import { connect } from 'react-redux';
 
+// const iconUri = require('../grpIcon/dummyGroupIcon.png')
+const imgurl = 'https://firebasestorage.googleapis.com/v0/b/chatapp-25815.appspot.com/o/images%2FdummyGroupIcon.png?alt=media&token=e96ec4ca-6b23-4611-a2a4-3aecc43c9e21'
 
 
 const options = {
@@ -32,6 +34,8 @@ class Creategroup extends Component {
             imageUrl: null,
         }
     }
+
+
     picImage = () => {
         // alert('clicked')
         ImagePicker.launchImageLibrary(options, (response) => {
@@ -40,7 +44,6 @@ class Creategroup extends Component {
             } else if (response.error) {
             } else {
                 const source = response.uri;
-
                 // You can also display the image using data:
                 // const source = { uri: 'data:image/jpeg;base64,' + response.data };
 
@@ -53,7 +56,9 @@ class Creategroup extends Component {
     pushData = () => {
         const { groupName, description, imageUrl } = this.state
 
-        this.props.createGroup(groupName, description, imageUrl)
+        let getimageUrl = imageUrl ? imageUrl : imgurl
+
+        this.props.createGroup(groupName, description, getimageUrl)
 
         this.setState({
             groupName: '',
@@ -61,7 +66,6 @@ class Creategroup extends Component {
             imageUrl: null,
         })
         this.props.close()
-
     }
     setModalVisible(visible) {
         this.setState({ modalVisible: visible });
@@ -72,30 +76,38 @@ class Creategroup extends Component {
     handleSubmit = () => {
         const { avatarSource, groupName, description } = this.state;
 
-        if (groupName && description && avatarSource) {
+        if (groupName && description) {
+
+            // Uri file = Uri.fromFile(new File("../grpIcon/dummyGroupIcon.png"))
+            // var file = Uri.fromFile(new File("path/to/images/file.jpg"));
+
             let uri = avatarSource
 
             const storageRef = firebase.storage().ref("/images/" + uri);
 
-            storageRef.put(this.state.avatarSource).then((snap) => {
-                storageRef.getDownloadURL().then((res) => {
-                    this.setState({
-                        imageUrl: res,
+
+            if(uri){
+                storageRef.put(uri).then((snap) => {
+                    storageRef.getDownloadURL().then((res) => {
+                        this.setState({
+                            imageUrl: res,
+                        })
+                        // alert("get Url")
+                        this.pushData()
                     })
-                    // alert("get Url")
-                    this.pushData()
                 })
-            })
+            }else{
+                this.pushData()
+            }
+
+          
         } else {
             Alert.alert('Please Enter All Fields.', '', null, { cancelable: false })
         }
-
     }
-
     render() {
-        const { groupName, description, avatarSource, imageUrl } = this.state
-        const isInvalid = groupName === '' || description === '' || avatarSource === null;
-
+        const { groupName, description, avatarSource, imageUrl, iconSource } = this.state
+        // const isInvalid = groupName === '' || description === '';
         return (
             <View >
                 <Modal
@@ -127,11 +139,14 @@ class Creategroup extends Component {
                                         value={description}
                                     />
                                 </Item>
-                                <TouchableOpacity style={{ flexDirection: "row", justifyContent: 'space-between', padding: 5, marginTop: 25, marginLeft: 12, height: 35 }} onPress={this.picImage} >
-                                    <Label style={{ color: '#696969', }}  >Upload Image</Label>
-                                    <Text style={{ justifyContent: 'flex-end', paddingRight: 40 }} >
+                                <View style={{paddingTop:20, flexDirection:'row', justifyContent:'center'}}>
+                                    <Thumbnail  square source={this.state.avatarSource ? { uri: avatarSource } :{ uri : imgurl }} />
+                                </View>
+                                <TouchableOpacity style={{ flexDirection: "row", justifyContent: 'center', paddingTop: 10, }} onPress={this.picImage} >
+                                    <Label style={{ color: '#696969', }}  >Select your group icon</Label>
+                                    {/* <Text style={{ justifyContent: 'flex-end', paddingRight: 40 }} >
                                         <Icon style={this.state.avatarSource ? { color: "green" } : { color: "gray" }} name="camera" ></Icon>
-                                    </Text>
+                                    </Text> */}
                                 </TouchableOpacity>
                                 {
                                     this.state.imageUrl ?
@@ -140,6 +155,7 @@ class Creategroup extends Component {
                                 }
 
                                 <Text>{"\n"}</Text>
+                                
                                 <Button title="Submit" color="#66CCFF"
                                     onPress={this.handleSubmit} />
                             </Form>
@@ -159,8 +175,8 @@ class Creategroup extends Component {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        createGroup: (groupName, description, imageUrl) => {
-            dispatch(createGroup(groupName, description, imageUrl))
+        createGroup: (groupName, description, getimageUrl) => {
+            dispatch(createGroup(groupName, description, getimageUrl))
         }
     }
 }

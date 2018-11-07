@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { AsyncStorage } from 'react-native';
+import { AsyncStorage, StatusBar } from 'react-native';
 import Authnumber from './src/containers/Authnumber'
 import ConfirmCode from './src/containers/Codeconfirm'
 import UserDetail from './src/containers/Userdetails'
@@ -37,9 +37,11 @@ class App extends Component {
     store.dispatch(logUser());
   }
   render() {
+    // StatusBar.setBackgroundColor("#66CCFF");
     return (
 
       <Provider store={store}>
+      {/* <StatusBar backgroundColor="#66CCFF" /> */}
         <AppStackNavigator />
       </Provider>
     );

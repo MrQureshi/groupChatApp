@@ -7,11 +7,9 @@ import { acceptRequest, rejectRequest, } from '../action'
 
 const { height, width, fontScale } = Dimensions.get("window")
 
-
 class superAdmin extends Component {
     constructor(props){
         super(props)
-
         this.state ={
             requestList: []
         }
@@ -32,7 +30,7 @@ class superAdmin extends Component {
         const reqList = this.props.reqList && this.props.reqList
 
         return (
-            <View style={{ height: height - 75 }}>
+            <View style={{ height: height, backgroundColor: '#E5E5E5' }}>
                 <Header style={{ backgroundColor:"#66CCFF"}}>
                     <Left>
                         <Button transparent>
@@ -48,7 +46,7 @@ class superAdmin extends Component {
                     {reqList?
                         reqList.map((rList, index) => {
                             return (
-                                <ListItem key={index} >
+                                <ListItem key={index} style={{ marginLeft: 15, marginRight: 15, paddingLeft: 10, paddingRight: 10,  borderRadius:5,  marginTop:5, backgroundColor: "white" }} >
                                     <Body>
                                         <Text>{rList.userName}</Text>
                                     </Body>

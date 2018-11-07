@@ -49,7 +49,7 @@ class comAllRequests extends Component {
 
 
         return (
-            <View style={{ height: height - 75 }}>
+            <View style={{ height: height, backgroundColor:"#E5E5E5" }}>
                 <Header style={{ backgroundColor:"#66CCFF"}}>
                     <Left>
                         <Button transparent>
@@ -66,7 +66,7 @@ class comAllRequests extends Component {
                         reqList && reqList.length ?
                         reqList.map((rList, index) => {
                             return (
-                                <ListItem key={index} >
+                                <ListItem key={index} style={{ marginLeft: 15, marginRight: 15, paddingLeft: 10, paddingRight: 10,  borderRadius:5,  marginTop:5, backgroundColor: "white" }} >
                                     <Body>
                                         <Text>{rList.userName}</Text>
                                         <Text note style={{color: 'green'}} >{rList.groupName}</Text>

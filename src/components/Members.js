@@ -23,12 +23,12 @@ class Members extends Component {
         const { groupKey, userkey, Token, userName, phoneNumber } = memList
         this.props.makeAdmin(groupKey, userkey, Token, userName, phoneNumber)
     }
-    
+
     render() {
         const memList = this.props.membersList && this.props.membersList
         return (
-            <View style={{ height: height - 75 }}>
-                <Header style={{ backgroundColor:"#66CCFF"}}>
+            <View style={{ height: height, backgroundColor: "#E5E5E5" }}>
+                <Header style={{ backgroundColor: "#66CCFF" }}>
                     <Left>
                         <Button transparent>
                             <Icon name='menu' />
@@ -45,19 +45,19 @@ class Members extends Component {
                             memList ?
                                 memList.map((memList, index) => {
                                     return (
-                                        <ListItem key={index} >
+                                        <ListItem key={index} style={{ marginLeft: 15, marginRight: 15, paddingLeft: 10, paddingRight: 10, borderRadius: 5, marginTop: 5, backgroundColor: "white" }} >
                                             <Body>
                                                 <Text>{memList.userName}</Text>
                                             </Body>
                                             <Right style={{ flexDirection: "row", justifyContent: "flex-end" }}>
-                                            {
-                                                memList.Admin && memList.Admin ? 
-                                                <Text style={{ paddingLeft: 25, color: "green", width: 80 }} >Admin</Text>
-                                                :
-                                                <TouchableOpacity onPress={() => this.handleMakeAdmin(memList)}>
-                                                    <Text style={{ paddingLeft: 25, width: 120 }} >Make Admin</Text>
-                                                </TouchableOpacity>
-                                            }
+                                                {
+                                                    memList.Admin && memList.Admin ?
+                                                        <Text style={{ paddingLeft: 25, color: "green", width: 80 }} >Admin</Text>
+                                                        :
+                                                        <TouchableOpacity onPress={() => this.handleMakeAdmin(memList)}>
+                                                            <Text style={{ paddingLeft: 25, width: 120 }} >Make Admin</Text>
+                                                        </TouchableOpacity>
+                                                }
                                             </Right>
                                         </ListItem>
                                     )

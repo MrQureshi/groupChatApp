@@ -149,10 +149,9 @@ export const getSelectedGroup = (list) => {
     }
 }
 
-export const sendMessage = (textMsg, groupKey, groupName, msgTime) => {
+export const sendMessage = (textMsg, groupKey, groupName, msgTime, groupImageUrl) => {
     return () => {
         let Currentuser = firebase.auth().currentUser.uid
-
         if (Currentuser) {
             firebase.database().ref(`user/${Currentuser}/`).on('value', snap => {
 
@@ -163,7 +162,7 @@ export const sendMessage = (textMsg, groupKey, groupName, msgTime) => {
                 let phoneNumber = objUser.phoneNumber
                 firebase.database().ref(`messages/${groupKey}`).push(
                     {
-                        userName, userKey, rollNumber, phoneNumber, groupKey, textMsg, groupName, msgTime
+                        userName, userKey, rollNumber, phoneNumber, groupKey, textMsg, groupName, msgTime,groupImageUrl
                     }
                 )
             })
@@ -178,10 +177,8 @@ export const allMessage = (userKey) => {
             if (objgroup === null) {
                 return objgroup = {}
             }
-            // console.log("11111", objgroup)
             let groupKeys = Object.keys(objgroup)
 
-            // console.log("12345", groupKeys)
             var GroupsKeysHaveCurrentUser = []
             groupKeys.forEach((getGroupKeys, i) => {
                 if (objgroup[getGroupKeys].member) {
@@ -208,14 +205,13 @@ export const allMessage = (userKey) => {
                     getMessages.push(obj[k])
                 })
                 let allMessages = []
-
                 for (let key in getMessages) {
                     let data = getMessages[key]
                     for (let allMsg in data) {
                         allMessages.push(data[allMsg])
                     }
                 }
-                allMessages.sort((a, b) => a.msgTime - b.msgTime)
+                allMessages.sort((a, b) => a.msgTime + b.msgTime)
 
                 dispatch({
                     type: "ALL_MESSAGES",
@@ -236,7 +232,7 @@ export const allMessagesForSuperAdmin = () => {
                     aryMessagesForSuperAdmin.push(getData[al])
                 }
             }
-            aryMessagesForSuperAdmin.sort((a, b) => a.msgTime - b.msgTime)
+            aryMessagesForSuperAdmin.sort((a, b) => a.msgTime + b.msgTime)
 
             dispatch({
                 type: "ALLMESSAGES_SUPERADMIN",

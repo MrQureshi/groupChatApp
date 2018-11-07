@@ -16,7 +16,6 @@ class UserDetails extends React.Component {
         }
     }
     componentWillReceiveProps(nextProps) {
-        console.log("nextPProp userDetail", nextProps.logedUser)
         let currentUser = nextProps.logedUser
 
         if (currentUser) {
@@ -73,7 +72,6 @@ class UserDetails extends React.Component {
     }
 }
 const mapStateToProps = (state) => {
-    console.log("state UserDetal", state)
     return {
         logedUser: state.Signin.logUser,
 
