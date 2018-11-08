@@ -16,6 +16,7 @@
     "react-native-image-picker": "^0.26.10",
     "react-native-phone-input": "^0.2.1",
     "react-native-popup-dialog": "^0.15.1",
+    "react-native-pulse-loader": "^1.0.2",
     "react-native-router-flux": "^4.0.5",
     "react-navigation": "2.17.0",
     "react-phone-number-input": "^2.2.9",

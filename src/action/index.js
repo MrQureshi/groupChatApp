@@ -21,6 +21,11 @@ export const logUser = () => {
                         })
                     }
                 })
+            } else {
+                return dispatch({
+                    type: "NOT_USER",
+                    payload: "Not User"
+                })
             }
         })
     }

@@ -22,14 +22,18 @@ class VerificationCode extends Component {
         };
     }
     componentWillReceiveProps(nextProps) {
-        
+        // console.log("QQQ", nextProps)   
         let currentUser = nextProps.logedUser
         
-        if (currentUser) {
-            this.props.navigation.replace("Dashboard")
+        if(currentUser === "Not User") {
+            return
         } else if (currentUser === false) {
+            
             this.props.navigation.replace("UserDetail")
+        } else if (currentUser) {
+            this.props.navigation.replace("Dashboard")
         }
+
     }
     componentDidMount() {
         this.props.logUser()

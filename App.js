@@ -36,12 +36,11 @@ class App extends Component {
   componentDidMount() {
     store.dispatch(logUser());
   }
+  
   render() {
-    // StatusBar.setBackgroundColor("#66CCFF");
     return (
 
       <Provider store={store}>
-      {/* <StatusBar backgroundColor="#66CCFF" /> */}
         <AppStackNavigator />
       </Provider>
     );
