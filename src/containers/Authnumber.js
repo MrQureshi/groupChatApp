@@ -6,7 +6,7 @@ import PulseLoader from 'react-native-pulse-loader';
 
 
 const { height, width, fontScale } = Dimensions.get("window")
-import { Signin } from '../action'
+import { Signin } from '../store/action'
 
 // import firebase from 'react-native-firebase';
 
@@ -76,13 +76,13 @@ class Authnumber extends Component {
                 </Text>
                 {
                     this.state.showMe ?
-                        <Modal visible={this.state.showMe}   >
+                        <Modal visible={this.state.showMe} onRequestClose={()=>''}   >
                             {/* <View style={{ height: height, width: width, backgroundColor: 'rgba(0, 0, 0, 0.5)' }} > */}
                             <PulseLoader backgroundColor={'#66CCFF'} borderColor={'#000080'} size={20}
                                 pressDuration={20}
                                 // pressInValue={0.4} 
                                 pressInValue={500}
-                                // avatar={'https://firebasestorage.googleapis.com/v0/b/chatapp-25815.appspot.com/o/images%2FdummyGroupIcon.png?alt=media&token=e96ec4ca-6b23-4611-a2a4-3aecc43c9e21'}
+                                avatar={'https://firebasestorage.googleapis.com/v0/b/chatapp-25815.appspot.com/o/images%2FdummyGroupIcon.png?alt=media&token=e96ec4ca-6b23-4611-a2a4-3aecc43c9e21'}
                             />
                             {/* <ActivityIndicator style={{}} size='large' color='green' /> */}
                             {/* </View> */}

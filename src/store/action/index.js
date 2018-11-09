@@ -1,6 +1,6 @@
 import firebase from 'react-native-firebase';
-import Admin from '../components/Admin';
-import { compose } from 'redux';
+// import Admin from '../components/Admin';
+// import { compose } from 'redux';
 
 export const logUser = () => {
     return dispatch => {

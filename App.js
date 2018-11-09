@@ -8,11 +8,11 @@ import Dashboard from './src/containers/Dashboard'
 import Admin from './src/components/Admin'
 import Groupselected from './src/components/SelectedGroups'
 import Allrequest from './src/components/AllRequests'
-import firebase from 'react-native-firebase'
+// import firebase from 'react-native-firebase'
 import Members from './src/components/Members'
 import store from './src/store'
 import { Provider } from 'react-redux'
-import { logUser } from './src/action'
+import { logUser } from './src/store/action'
 
 // Admin
 // import { connect } from 'react-redux'

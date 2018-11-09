@@ -2,7 +2,7 @@ import React from 'react'
 import { View, Button, Text, TextInput, Image, Dimensions, ScrollView } from 'react-native';
 import { Container, Header, Content, Form, Item, Input, Label } from 'native-base';
 import firebase from 'react-native-firebase'
-import { userDetail } from '../action'
+import { userDetail } from '../store/action'
 import { connect } from 'react-redux'
 
 const successImageUri = 'http://invagesystems.com/home/wp-content/uploads/2018/03/dummyprofilepic.png';

@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Text, Dimensions, TouchableOpacity } from 'react-native'
 import { connect } from "react-redux"
 import { Header, View, Button, Icon, Left, Body, Title, Right, ListItem, List, } from 'native-base';
-import { ViewMembers, makeAdmin } from '../action'
+import { ViewMembers, makeAdmin } from '../store/action'
 
 const { height, width, fontScale } = Dimensions.get("window")
 

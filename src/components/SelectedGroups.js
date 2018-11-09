@@ -1,7 +1,8 @@
 import React from 'react'
 import { Text, ScrollView, TouchableOpacity, Dimensions, Modal, TouchableHighlight, KeyboardAvoidingView } from 'react-native'
 import { Container, Header, Footer, Content, CardItem, Item, Input, View, Fab, Button, Card, Icon, Left, Body, Title, Right, List, ListItem, Thumbnail, } from 'native-base';
-import { sendMessage } from '../action'
+import { sendMessage } from '../store/action'
+import moment from 'moment';
 
 import { connect } from "react-redux"
 const { height, width, fontScale } = Dimensions.get("window")
@@ -98,25 +99,10 @@ class Selectedgroup extends React.Component {
         const { showMessageList, SelectedGroup, textMsg, modalVisible, msgModalVisible, selectedMsg } = this.state
         const user = this.props.logUser && this.props.logUser.user
 
-        const InValid = textMsg === '';
+        var msgTime = moment(selectedMsg.msgTime).format('LT');
+        var msgDate = moment(selectedMsg.msgTime).format('ll');
 
-        let date = new Date(selectedMsg.msgTime);
-        let MDY = date.toDateString()
-        let MDY1 = MDY.split(' ')
-        let dd = MDY1.shift();
-        let hh = date.getHours();
-        let mm = date.getMinutes();
-        var amPM = (hh > 11) ? "PM" : "AM";
-        if (hh > 12) {
-            hh -= 12;
-        } else if (hh == 0) {
-            hh = "12";
-        }
-        if (mm < 10) {
-            mm = "0" + mm;
-        }
-        let msgDate = MDY1 + ' '
-        let selectedMsgtime = hh + ":" + mm + " " + amPM;
+        const InValid = textMsg === '';
 
         return (
             <View style={{ backgroundColor: "#E5E5E5" }} >
@@ -158,25 +144,12 @@ class Selectedgroup extends React.Component {
                         <List>
                             {
                                 showMessageList.map((mList, index) => {
-                                    let date = new Date(mList.msgTime);
-                                    let MDY = date.toDateString()
-                                    let MDY1 = MDY.split(' ')
-                                    let dd = MDY1.shift();
-                                    let hh = date.getHours();
-                                    let mm = date.getMinutes();
-                                    var amPM = (hh > 11) ? "PM" : "AM";
-                                    if (hh > 12) {
-                                        hh -= 12;
-                                    } else if (hh == 0) {
-                                        hh = "12";
-                                    }
-                                    if (mm < 10) {
-                                        mm = "0" + mm;
-                                    }
-                                    let d = MDY1 + ''
-                                    let gettime = hh + ":" + mm + " " + amPM;
+
+                                    var time = moment(mList.msgTime).format('LT');
+                                    var date = moment(mList.msgTime).format('ll');
+
                                     return (
-                                        <ListItem key={index} style={{ marginLeft: 15, marginRight: 15, paddingLeft: 10, paddingRight: 10,  borderRadius:5, marginBottom: 5, backgroundColor: "white" }} >
+                                        <ListItem key={index} style={{ marginLeft: 15, marginRight: 15, paddingLeft: 10, paddingRight: 10, borderRadius: 5, marginBottom: 5, backgroundColor: "white" }} >
                                             <TouchableOpacity onPress={() => this.handleMsgModel(mList)} style={{ flexDirection: "row" }}>
                                                 {/* <Left>
                                                     <Thumbnail source={{ uri: successImageUri }} />
@@ -196,8 +169,8 @@ class Selectedgroup extends React.Component {
                                                 </Body>
                                                 <Right>
                                                     {/* <Text style={{ color: 'green' }}>{mList.groupName}</Text> */}
-                                                    <Text note>{gettime}</Text>
-                                                    <Text note>{d}</Text>
+                                                    <Text note>{time}</Text>
+                                                    <Text note>{date}</Text>
                                                 </Right>
                                             </TouchableOpacity>
                                         </ListItem>
@@ -289,7 +262,7 @@ class Selectedgroup extends React.Component {
                                     <Body>
                                         <Text>{selectedMsg.groupName}</Text>
                                         <Text note>{msgDate}</Text>
-                                        <Text note>{selectedMsgtime}</Text>
+                                        <Text note>{msgTime}</Text>
                                     </Body>
                                 </Left>
                                 <Right>

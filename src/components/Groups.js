@@ -7,7 +7,7 @@ import { Text, Dimensions, ScrollView, TouchableOpacity, TouchableHighlight } fr
 import firebase from 'react-native-firebase'
 import Create from '../components/createGroup'
 import { connect } from 'react-redux'
-import { groupList, requestHandle, getSelectedGroup, Requests, deleteGroup } from '../action'
+import { groupList, requestHandle, getSelectedGroup, Requests, deleteGroup } from '../store/action'
 const { height, width, fontScale } = Dimensions.get("window")
 
 // const successImageUri = 'https://muawia.com/wp-content/uploads/2018/07/trace-3157431__340.jpg';

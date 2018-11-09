@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { View, Button, Text, TextInput, Image, Dimensions, ScrollView } from 'react-native';
 import { connect } from 'react-redux'
-import { Confirmcode, logUser } from '../action'
+import { Confirmcode, logUser } from '../store/action'
 
 
 const { height, width, fontScale } = Dimensions.get("window")

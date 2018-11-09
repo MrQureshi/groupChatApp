@@ -9,7 +9,7 @@ import Chat from '../components/Chat'
 import Group from '../components/Groups'
 import Allrequest from '../components/AllRequests'
 // import Admin from '../components/Admin'
-import { clearState } from '../action'
+import { clearState } from '../store/action'
 const { height, width, fontScale } = Dimensions.get("window")
 
 

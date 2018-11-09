@@ -5,8 +5,10 @@ import {
     Container, Header, Footer, Content, Item, Input, View, Fab, Button, Card, Icon, Left,
     Body, Title, Right, List, ListItem, Thumbnail, CardItem
 } from 'native-base';
+import moment from 'moment';
+
 import { connect } from 'react-redux'
-import { allMessage, allMessagesForSuperAdmin } from '../action'
+import { allMessage, allMessagesForSuperAdmin } from '../store/action'
 
 const imgurl = 'https://firebasestorage.googleapis.com/v0/b/chatapp-25815.appspot.com/o/images%2FdummyGroupIcon.png?alt=media&token=e96ec4ca-6b23-4611-a2a4-3aecc43c9e21'
 
@@ -14,7 +16,6 @@ const { height, width, fontScale } = Dimensions.get("window")
 class Chats extends React.Component {
     constructor(props) {
         super(props)
-
         this.state = {
             textMsg: '',
             messageList: [],
@@ -77,6 +78,12 @@ class Chats extends React.Component {
     render() {
         const { msgModalVisible, selectedMsg, showallMessagesForSA, showUserAllMessages } = this.state
         const user = this.props.logUser && this.props.logUser.user
+
+
+
+        var selMsgTime = moment(selectedMsg.msgTime).format('LT');
+        var selMsgDate = moment(selectedMsg.msgTime).format('ll');
+
         let date = new Date(selectedMsg.msgTime);
         let MDY = date.toDateString()
         let MDY1 = MDY.split(' ')
@@ -125,23 +132,10 @@ class Chats extends React.Component {
                             {
                                 user === 'superUser' ?
                                     showallMessagesForSA && showallMessagesForSA.map((Msg, index) => {
-                                        let date = new Date(Msg.msgTime);
-                                        let MDY = date.toDateString()
-                                        let MDY1 = MDY.split(' ')
-                                        let dd = MDY1.shift();
-                                        let hh = date.getHours();
-                                        let mm = date.getMinutes();
-                                        var amPM = (hh > 11) ? "PM" : "AM";
-                                        if (hh > 12) {
-                                            hh -= 12;
-                                        } else if (hh == 0) {
-                                            hh = "12";
-                                        }
-                                        if (mm < 10) {
-                                            mm = "0" + mm;
-                                        }
-                                        let d = MDY1 + " "
-                                        let gettime = hh + ":" + mm + " " + amPM;
+
+                                        var msgTime = moment(Msg.msgTime).format('LT');
+                                        var msgDate = moment(Msg.msgTime).format('ll');
+                                
                                         return (
                                         <ListItem key={index} style={{ marginLeft: 15, marginRight: 15, paddingLeft: 10, paddingRight: 10, borderRadius:5, marginBottom: 5, backgroundColor: "white" }} >
                                                 <TouchableOpacity onPress={() => this.handleMsgModel(Msg)} style={{ flexDirection: "row" }}>
@@ -153,8 +147,8 @@ class Chats extends React.Component {
                                                     </Body>
                                                     <Right style={{ width: 50 }}>
                                                         <Text style={{ color: 'green' }}>{Msg.groupName}</Text>
-                                                        <Text note>{d}</Text>
-                                                        <Text note>{gettime}</Text>
+                                                        <Text note>{msgDate}</Text>
+                                                        <Text note>{msgTime}</Text>
                                                     </Right>
                                                 </TouchableOpacity>
                                             </ListItem>
@@ -163,23 +157,10 @@ class Chats extends React.Component {
                                     :
                                     showUserAllMessages && showUserAllMessages.map((Msg, index) => {
                                         // let MDY = date1.toDateString(Msg.msgTime)
-                                        let date = new Date(Msg.msgTime);
-                                        let MDY = date.toDateString()
-                                        let MDY1 = MDY.split(' ')
-                                        let dd = MDY1.shift();
-                                        let hh = date.getHours();
-                                        let mm = date.getMinutes();
-                                        var amPM = (hh > 11) ? "PM" : "AM";
-                                        if (hh > 12) {
-                                            hh -= 12;
-                                        } else if (hh == 0) {
-                                            hh = "12";
-                                        }
-                                        if (mm < 10) {
-                                            mm = "0" + mm;
-                                        }
-                                        let d = MDY1 + " "
-                                        let gettime =  hh + ":" + mm + " " + amPM;
+
+                                        var msgTime = moment(Msg.msgTime).format('LT');
+                                        var msgDate = moment(Msg.msgTime).format('ll');
+                                
                                         return (
                                         <ListItem key={index} style={{ marginLeft: 15, marginRight: 15, paddingLeft: 10, paddingRight: 10, borderRadius:5, marginBottom: 5, backgroundColor: "white" }} >
                                                 <TouchableOpacity onPress={() => this.handleMsgModel(Msg)} style={{ flexDirection: "row" }}>
@@ -192,8 +173,8 @@ class Chats extends React.Component {
                                                         <Text numberOfLines={1} note>{Msg.textMsg}...</Text>
                                                     </Body>
                                                     <Right>
-                                                        <Text note>{d}</Text>
-                                                        <Text note>{gettime}</Text>
+                                                        <Text note>{msgDate}</Text>
+                                                        <Text note>{msgTime}</Text>
                                                     </Right>
                                                 </TouchableOpacity>
                                             </ListItem>
@@ -225,8 +206,8 @@ class Chats extends React.Component {
                                     <Thumbnail square source={{ uri: selectedMsg.groupImageUrl }} />
                                     <Body>
                                         <Text>{selectedMsg.groupName}</Text>
-                                        <Text note>{msgDate}</Text>
-                                        <Text note>{selectedMsgtime}</Text>
+                                        <Text note>{selMsgDate}</Text>
+                                        <Text note>{selMsgTime}</Text>
                                     </Body>
                                 </Left>
                                 <Right>

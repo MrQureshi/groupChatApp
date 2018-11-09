@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Text, Dimensions, TouchableOpacity } from 'react-native'
 import { connect } from "react-redux"
 import { Header, View, Button, Icon, Left, Body, Title, Right, ListItem, } from 'native-base';
-import { acceptRequest, rejectRequest, } from '../action'
+import { acceptRequest, rejectRequest, } from '../store/action'
 // import firebase from 'react-native-firebase'
 
 const { height, width, fontScale } = Dimensions.get("window")

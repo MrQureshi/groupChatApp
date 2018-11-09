@@ -3,7 +3,7 @@ import { Alert, Modal, Text, View, Button, TouchableOpacity } from 'react-native
 import { Form, Item, Input, Label, Icon, Left, Content, Thumbnail, Image } from 'native-base';
 import firebase from 'react-native-firebase'
 import ImagePicker from 'react-native-image-picker';
-import { createGroup } from '../action';
+import { createGroup } from '../store/action';
 import { connect } from 'react-redux';
 
 // const iconUri = require('../grpIcon/dummyGroupIcon.png')
