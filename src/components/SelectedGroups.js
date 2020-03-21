@@ -240,11 +240,9 @@ class Selectedgroup extends React.Component {
                         </Card>
                     </View>
                 </Modal>
-                <Modal
-                    animationType='none' transparent={true} visible={msgModalVisible}
+                <Modal animationType='none' transparent={true} visible={msgModalVisible}
                     onRequestClose={() => this.setState({ msgModalVisible: false })}>
                     <View style={{ width: width, height: height, backgroundColor: 'rgba(0, 0, 0, 0.7)' }} >
-
                         <Card style={{ flex: 0, marginTop: 100, marginLeft: 20, marginRight: 20, justifyContent: 'center', alignItems: 'center' }}>
 
                             {/* <CardItem style={{ justifyContent: "center" }} >

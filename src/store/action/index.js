@@ -138,7 +138,6 @@ export const rejectRequest = (groupKey, userKey) => {
 }
 export const getSelectedGroup = (list) => {
     return dispatch => {
-
         firebase.database().ref(`messages/${list.key}`).on('value', snap => {
             let messages = []
             let objMsg = snap.val()

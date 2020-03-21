@@ -1,5 +1,3 @@
-
-
 import React from 'react'
 import { Text, Dimensions, StatusBar } from 'react-native'
 import { connect } from 'react-redux'
@@ -32,7 +30,9 @@ class Dashboard extends React.Component {
 
         return (
             <Tabs ref={(ref) => { this.tabRef = ref; }} tabBarPosition="bottom">
-                <Tab heading={<TabHeading style={{ backgroundColor: "#66baff" }} ><Icon color="red" name="chatbubbles" /></TabHeading>}>
+                <Tab 
+                heading={<TabHeading style={{ backgroundColor: "#66baff" }} >
+                <Icon color="red" name="chatbubbles" /></TabHeading>}>
                     <Chat navigation={this.props.navigation} tabRef={this.state.tabs} />
                 </Tab>
                 <Tab heading={<TabHeading style={{ backgroundColor: "#66baff" }} ><Icon name="people" /></TabHeading>} >

@@ -12,6 +12,7 @@ exports.pushNotifications = functions.database.ref('messages/{groupid}/{pushId}'
     // let Name = res.after._data.userName
     let groupName = res.after._data.groupName
     let msg= res.after._data.textMsg    
+    
     const payload = {
         notification: {
             title: groupName,
