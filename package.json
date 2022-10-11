@@ -10,7 +10,7 @@
     "moment": "^2.22.2",
     "native-base": "^2.8.0",
     "react": "^16.6.0-alpha.8af6728",
-    "react-native": "^0.57.4",
+    "react-native": "^0.70.2",
     "react-native-country-picker-modal": "^0.6.2",
     "react-native-fcm": "^16.2.3",
     "react-native-firebase": "^5.0.0",
